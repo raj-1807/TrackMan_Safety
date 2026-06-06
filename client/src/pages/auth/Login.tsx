@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
   Shield,
@@ -38,7 +38,13 @@ const Login: React.FC = () => {
 
     try {
       await login(email, password);
-      navigate('/dashboard');
+      // Role-based redirect
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      if (storedUser.role === 'TRACKMAN') {
+        navigate('/worker/dashboard');
+      } else {
+        navigate('/admin/dashboard');
+      }
     } catch (err: any) {
       setLocalError(err.message);
     }
