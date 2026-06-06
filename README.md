@@ -82,7 +82,7 @@ TrackMan_Safety/
 
 ```bash
 # Clone the repository
-git clone https://github.com/<raj-1807>/TrackMan_Safety.git
+git clone https://github.com/raj-1807/TrackMan_Safety.git
 cd TrackMan_Safety
 
 # Install server dependencies
