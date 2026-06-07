@@ -2,6 +2,8 @@ import React from 'react';
 import StatCard from '../../components/cards/StatCard';
 import WorkerCard from '../../components/cards/WorkerCard';
 import AlertCard from '../../components/cards/AlertCard';
+import MapComponent from '../../components/maps/MapComponent';
+import { useNavigate } from 'react-router-dom';
 import {
   Users,
   MapPin,
@@ -9,10 +11,11 @@ import {
   Clock,
   Shield,
   Activity,
-  TrendingUp,
 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
+
   // Mock data — will be replaced with API calls
   const stats = [
     { title: 'Active Workers', value: '12', icon: Users, color: 'emerald' as const, trend: { value: '+3', isPositive: true } },
@@ -57,25 +60,27 @@ const Dashboard: React.FC = () => {
 
       {/* Map Preview + Alerts */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Map Placeholder */}
+        {/* Live Map */}
         <div className="xl:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <div className="p-5 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-blue-600" />
               <h3 className="text-base font-semibold text-slate-900">Live Worker Map</h3>
             </div>
-            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 rounded-full">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-[11px] font-semibold text-emerald-700">Live</span>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 rounded-full">
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="text-[11px] font-semibold text-emerald-700">Live</span>
+              </div>
+              <button
+                onClick={() => navigate('/admin/monitoring')}
+                className="text-xs font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
+              >
+                Full Screen →
+              </button>
             </div>
           </div>
-          <div className="h-80 bg-gradient-to-br from-slate-100 to-blue-50 flex items-center justify-center">
-            <div className="text-center">
-              <MapPin className="w-12 h-12 text-blue-300 mx-auto mb-3" />
-              <p className="text-sm text-slate-500 font-medium">Map view coming soon</p>
-              <p className="text-xs text-slate-400 mt-1">Leaflet.js integration in progress</p>
-            </div>
-          </div>
+          <MapComponent height="h-80" />
         </div>
 
         {/* Recent Alerts */}
@@ -85,7 +90,12 @@ const Dashboard: React.FC = () => {
               <AlertTriangle className="w-5 h-5 text-amber-500" />
               <h3 className="text-base font-semibold text-slate-900">Recent Alerts</h3>
             </div>
-            <span className="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-full">4 Active</span>
+            <button
+              onClick={() => navigate('/admin/alerts')}
+              className="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-full hover:bg-red-100 transition-all cursor-pointer"
+            >
+              4 Active
+            </button>
           </div>
           <div className="p-3 space-y-2 max-h-[380px] overflow-y-auto">
             {recentAlerts.map((alert, i) => (
@@ -104,7 +114,12 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500">Updated 30s ago</span>
-            <button className="text-xs font-semibold text-blue-600 hover:text-blue-700 cursor-pointer">View All →</button>
+            <button
+              onClick={() => navigate('/admin/workers')}
+              className="text-xs font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
+            >
+              View All →
+            </button>
           </div>
         </div>
         <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">

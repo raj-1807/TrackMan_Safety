@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
+import AddWorkerModal from '../../components/modals/AddWorkerModal';
 import {
   Users,
   Search,
   Plus,
-  Filter,
   Download,
   ChevronDown,
   Eye,
   Edit,
   MoreHorizontal,
-  Signal,
-  SignalZero,
 } from 'lucide-react';
 
 interface Worker {
@@ -25,7 +23,7 @@ interface Worker {
   lastSeen: string;
 }
 
-const mockWorkers: Worker[] = [
+const initialWorkers: Worker[] = [
   { id: '1', name: 'Amit Sharma', employeeId: 'TM-1001', email: 'amit@trackman.com', phone: '+91-9876543212', designation: 'Senior Trackman', department: 'Track Maintenance', status: 'ON_DUTY', lastSeen: '2 min ago' },
   { id: '2', name: 'Vikram Singh', employeeId: 'TM-1002', email: 'vikram@trackman.com', phone: '+91-9876543213', designation: 'Senior Trackman', department: 'Track Maintenance', status: 'ON_DUTY', lastSeen: '5 min ago' },
   { id: '3', name: 'Suresh Patel', employeeId: 'TM-1003', email: 'suresh@trackman.com', phone: '+91-9876543214', designation: 'Trackman', department: 'Track Maintenance', status: 'SOS', lastSeen: 'Just now' },
@@ -50,17 +48,41 @@ const statusBadge = (status: string) => {
 };
 
 const WorkerManagement: React.FC = () => {
+  const [workers, setWorkers] = useState(initialWorkers);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [showAddModal, setShowAddModal] = useState(false);
 
-  const filtered = mockWorkers.filter((w) => {
+  const filtered = workers.filter((w) => {
     const matchSearch = w.name.toLowerCase().includes(search.toLowerCase()) || w.employeeId.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === 'all' || w.status === statusFilter;
     return matchSearch && matchStatus;
   });
 
+  const handleAddWorker = (data: any) => {
+    const newWorker: Worker = {
+      id: String(workers.length + 1),
+      name: data.name,
+      employeeId: `TM-${1000 + workers.length + 1}`,
+      email: data.email,
+      phone: data.phone,
+      designation: data.designation,
+      department: data.department,
+      status: 'OFF_DUTY',
+      lastSeen: 'Never',
+    };
+    setWorkers((prev) => [...prev, newWorker]);
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Add Worker Modal */}
+      <AddWorkerModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSubmit={handleAddWorker}
+      />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -72,7 +94,10 @@ const WorkerManagement: React.FC = () => {
             <Download className="w-4 h-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-all shadow-sm cursor-pointer">
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-all shadow-sm cursor-pointer"
+          >
             <Plus className="w-4 h-4" />
             Add Worker
           </button>

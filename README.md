@@ -1,70 +1,99 @@
 # 🚂 TrackMan Safety — Railway Worker Safety Monitoring System
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)
-![React](https://img.shields.io/badge/react-18-blue.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-## 🎯 Problem Statement
-
-Every year, railway track maintenance workers (Trackmen) work directly on live tracks. Manual communication, no real-time visibility, and delayed emergency response lead to avoidable accidents.
-
-**TrackMan Safety** solves this by providing:
-- 📍 **Real-time GPS tracking** of every worker on the field
-- 🗺️ **Live map dashboard** for supervisors & control room
-- 🟢 **Geofenced maintenance zones** with automatic alerts
-- 🚨 **Emergency SOS button** for instant distress signals
-- ⚠️ **Train proximity alerts** pushed to workers' phones
-- 📋 **Attendance & activity logs** for compliance
+> Real-time GPS tracking, geofenced safety zones, and instant SOS alerts for railway track maintenance workers.
 
 ---
 
-## 🏗️ Tech Stack
+## 🔑 Features
 
-| Layer | Technology |
+### 👷 Trackman (Worker)
+- 📍 Real-time GPS location sharing (every 5 seconds)
+- 🚨 **Emergency SOS Button** with countdown & instant alert broadcast
+- ⏱️ Shift Start/Stop with live timer
+- 🗺️ Live map view of current location & nearby zones
+- 👤 Profile management
+- 📱 Mobile-first responsive design with bottom navigation
+
+### 👨‍💼 Supervisor
+- 📊 Dashboard with assigned workers overview
+- 👥 Worker management & status monitoring
+- 🗺️ Zone creation (Maintenance / Danger / Safe zones)
+- 🔔 Alert center with Acknowledge/Resolve actions
+
+### 🏢 Control Room Admin
+- 🗺️ **Full Live Monitoring Map** — Leaflet + OpenStreetMap with:
+  - Worker markers (color-coded by status)
+  - Zone circles (color-coded by type)
+  - Legend, fullscreen mode, satellite view
+- 📊 Advanced Reports & Analytics:
+  - Weekly activity charts
+  - Worker activity table with safety scores
+  - Alert history timeline
+  - Zone utilization bars
+- 🔔 Alert center with filtering by status & severity
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+| Technology | Purpose |
 |---|---|
-| **Frontend (Admin)** | React.js, Tailwind CSS, Leaflet.js |
-| **Frontend (Worker)** | React PWA (Progressive Web App) |
-| **Backend** | Node.js, Express.js, TypeScript |
-| **Database** | PostgreSQL + Prisma ORM |
-| **Real-Time** | Socket.IO |
-| **Maps** | OpenStreetMap + Leaflet.js |
-| **Auth** | JWT (JSON Web Tokens) |
+| React 19 | UI Framework |
+| TypeScript | Type Safety |
+| Vite 8 | Build Tool |
+| Tailwind CSS 4 | Styling |
+| React Router 7 | Routing |
+| React Leaflet + OpenStreetMap | Maps |
+| Axios | HTTP Client |
+| Socket.IO Client | Real-time events |
+| Lucide React | Icons |
+
+### Backend
+| Technology | Purpose |
+|---|---|
+| Node.js + Express | API Server |
+| TypeScript | Type Safety |
+| Prisma | ORM |
+| PostgreSQL | Database |
+| Socket.IO | WebSocket events |
+| JWT + Bcrypt | Authentication |
 
 ---
 
-## 📁 Project Structure
+## 📂 Project Structure
 
 ```
 TrackMan_Safety/
-├── client/                 # Admin Dashboard (React + Vite + TailwindCSS)
+├── client/                    # React Frontend
 │   ├── src/
-│   │   ├── pages/
-│   │   │   ├── auth/       # Login page
-│   │   │   ├── admin/      # Dashboard, Monitoring, Workers, Zones, Alerts, Reports
-│   │   │   └── worker/     # Worker Dashboard, Map, Profile
 │   │   ├── components/
-│   │   │   ├── layout/     # Sidebar, Navbar, Footer
-│   │   │   ├── cards/      # StatCard, WorkerCard, AlertCard
-│   │   │   ├── maps/       # MapComponent
-│   │   │   └── tables/     # WorkerTable, ZoneTable
-│   │   ├── context/        # AuthContext
-│   │   ├── hooks/          # useAuth, useSocket
-│   │   ├── services/       # API, Auth, Worker, Zone, Alert services
-│   │   ├── routes/         # AppRoutes
-│   │   └── utils/          # Constants
-│   └── public/
-├── worker-app/             # Worker PWA (React + Vite)
-├── server/                 # Backend API + Socket.IO
+│   │   │   ├── cards/         # StatCard, AlertCard, WorkerCard
+│   │   │   ├── layout/        # Sidebar, Navbar, Footer, AdminLayout
+│   │   │   ├── maps/          # MapComponent, LiveMap (Leaflet)
+│   │   │   ├── modals/        # CreateZoneModal, AddWorkerModal
+│   │   │   └── tables/        # WorkerTable, ZoneTable
+│   │   ├── context/           # AuthContext
+│   │   ├── hooks/             # useSocket
+│   │   ├── pages/
+│   │   │   ├── admin/         # Dashboard, Monitoring, Workers, Zones, Alerts, Reports
+│   │   │   ├── auth/          # Login
+│   │   │   └── worker/        # WorkerDashboard, WorkerMap, Profile
+│   │   ├── routes/            # AppRoutes (role-based routing)
+│   │   ├── services/          # API services (auth, worker, zone, alert, shift)
+│   │   └── utils/             # Constants
+│   └── index.html
+├── server/                    # Node.js Backend
 │   ├── src/
-│   │   ├── config/         # Database, environment
-│   │   ├── controllers/    # Auth, Worker, Zone, Alert, Shift, Location
-│   │   ├── middleware/     # JWT auth, role guards, error handler
-│   │   ├── routes/         # API route definitions
-│   │   ├── sockets/        # Socket.IO real-time events
-│   │   └── utils/          # Helpers
-│   └── prisma/             # Schema + seed data
-├── docs/
-└── README.md
+│   │   ├── controllers/       # Auth, Worker, Zone, Alert, Shift, Location
+│   │   ├── routes/
+│   │   ├── middleware/
+│   │   ├── sockets/
+│   │   └── config/
+│   └── prisma/                # Database schema & seed
+└── worker-app/                # (Future) Mobile App
 ```
 
 ---
@@ -72,75 +101,76 @@ TrackMan_Safety/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js >= 18
-- PostgreSQL >= 14
-- npm or yarn
+- Node.js 18+
+- PostgreSQL (or use [Neon](https://neon.tech))
 
-### Installation
-
+### 1. Clone the repository
 ```bash
-# Clone the repository
 git clone https://github.com/raj-1807/TrackMan_Safety.git
 cd TrackMan_Safety
-
-# Install server dependencies
-cd server && npm install
-
-# Install admin dashboard dependencies
-cd ../client && npm install
-
-# Install worker app dependencies
-cd ../worker-app && npm install
 ```
 
-### Environment Variables
-
-Create `.env` files in `server/`, `client/`, and `worker-app/` directories. See `.env.example` files for required variables.
-
-### Running Locally
-
+### 2. Setup Backend
 ```bash
-# Terminal 1: Start the server
-cd server && npm run dev
-
-# Terminal 2: Start admin dashboard
-cd client && npm run dev
-
-# Terminal 3: Start worker PWA
-cd worker-app && npm run dev
+cd server
+npm install
+cp .env.example .env
+# Edit .env with your PostgreSQL connection string
+npx prisma migrate dev
+npx prisma db seed
+npm run dev
 ```
 
-### Demo Credentials
+### 3. Setup Frontend
+```bash
+cd client
+npm install
+npm run dev
+```
+
+### 4. Open in browser
+- Frontend: [http://localhost:5173](http://localhost:5173)
+- Backend API: [http://localhost:5000/api/health](http://localhost:5000/api/health)
+
+---
+
+## 🔐 Demo Credentials
 
 | Role | Email | Password |
-|---|---|---|
+|------|-------|----------|
 | Supervisor | supervisor@trackman.com | password123 |
 | Control Room | control@trackman.com | password123 |
 | Trackman | amit@trackman.com | password123 |
 
 ---
 
-## 🧑‍🤝‍🧑 Team Members
+## 🗺 Deployment
 
-| Role | Name |
-|---|---|
-| Full Stack Lead | |
-| Frontend Dev | |
-| Backend Dev | |
-| Tester / Docs | |
+| Service | Platform |
+|---------|----------|
+| Frontend | [Vercel](https://vercel.com) |
+| Backend | [Render](https://render.com) |
+| Database | [Neon PostgreSQL](https://neon.tech) |
+
+---
+
+## 📋 API Endpoints
+
+| Module | Endpoint | Methods |
+|--------|----------|---------|
+| Auth | `/api/auth/*` | POST login, register, refresh |
+| Workers | `/api/workers/*` | GET, PUT |
+| Zones | `/api/zones/*` | GET, POST, PUT, DELETE |
+| Alerts | `/api/alerts/*` | GET, POST, PUT |
+| Shifts | `/api/shifts/*` | GET, POST |
+| Locations | `/api/locations/*` | GET, POST |
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Built with ❤️ for Indian Railways worker safety.

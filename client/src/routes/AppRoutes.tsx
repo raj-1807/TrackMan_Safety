@@ -25,7 +25,7 @@ const AppRoutes: React.FC = () => {
       {/* Public Routes */}
       <Route path="/login" element={<Login />} />
 
-      {/* Admin Routes — with Sidebar Layout */}
+      {/* Admin / Supervisor Routes — with Sidebar Layout */}
       <Route
         path="/admin"
         element={
@@ -44,16 +44,6 @@ const AppRoutes: React.FC = () => {
       </Route>
 
       {/* Worker Routes — Mobile-first, no sidebar */}
-      <Route
-        path="/worker"
-        element={
-          <ProtectedRoute allowedRoles={['TRACKMAN']}>
-            <></>
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Navigate to="dashboard" replace />} />
-      </Route>
       <Route
         path="/worker/dashboard"
         element={
@@ -75,6 +65,14 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute allowedRoles={['TRACKMAN']}>
             <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/worker"
+        element={
+          <ProtectedRoute allowedRoles={['TRACKMAN']}>
+            <Navigate to="/worker/dashboard" replace />
           </ProtectedRoute>
         }
       />

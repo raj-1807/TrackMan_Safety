@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, Shield, Wifi, WifiOff, Navigation, Clock } from 'lucide-react';
+import { AlertTriangle, Shield, WifiOff, Navigation, Clock, CheckCircle, CheckCheck } from 'lucide-react';
 
 interface AlertCardProps {
   type: 'ZONE_BREACH' | 'SOS' | 'TRAIN_APPROACHING' | 'DEVICE_OFFLINE' | 'GEOFENCE_EXIT';
@@ -9,6 +9,8 @@ interface AlertCardProps {
   time: string;
   status: 'ACTIVE' | 'ACKNOWLEDGED' | 'RESOLVED';
   onClick?: () => void;
+  onAcknowledge?: () => void;
+  onResolve?: () => void;
 }
 
 const typeConfig = {
@@ -40,6 +42,8 @@ const AlertCard: React.FC<AlertCardProps> = ({
   time,
   status,
   onClick,
+  onAcknowledge,
+  onResolve,
 }) => {
   const typeInfo = typeConfig[type];
   const sevInfo = severityConfig[severity];
@@ -91,6 +95,30 @@ const AlertCard: React.FC<AlertCardProps> = ({
               {time}
             </span>
           </div>
+
+          {/* Action Buttons */}
+          {(onAcknowledge || onResolve) && status !== 'RESOLVED' && (
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
+              {onAcknowledge && status === 'ACTIVE' && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onAcknowledge(); }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg transition-all cursor-pointer"
+                >
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  Acknowledge
+                </button>
+              )}
+              {onResolve && (status === 'ACTIVE' || status === 'ACKNOWLEDGED') && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onResolve(); }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-all cursor-pointer"
+                >
+                  <CheckCheck className="w-3.5 h-3.5" />
+                  Resolve
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

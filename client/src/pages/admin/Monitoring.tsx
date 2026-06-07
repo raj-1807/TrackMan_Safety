@@ -1,20 +1,26 @@
 import React, { useState } from 'react';
 import WorkerCard from '../../components/cards/WorkerCard';
-import { MAP_CONFIG } from '../../utils/constants';
+import LiveMap from '../../components/maps/LiveMap';
+import type { MapWorker } from '../../components/maps/MapComponent';
 import {
-  MapPin,
   Users,
   Filter,
   RefreshCw,
-  Maximize2,
-  Layers,
   Radio,
 } from 'lucide-react';
+
+const defaultWorkers: MapWorker[] = [
+  { id: '1', name: 'Amit Sharma', employeeId: 'TM-1001', status: 'ON_DUTY', lat: 28.6424, lng: 77.2195, lastSeen: '2 min ago' },
+  { id: '2', name: 'Vikram Singh', employeeId: 'TM-1002', status: 'ON_DUTY', lat: 28.5875, lng: 77.2536, lastSeen: '5 min ago' },
+  { id: '3', name: 'Suresh Patel', employeeId: 'TM-1003', status: 'SOS', lat: 28.6692, lng: 77.4538, lastSeen: 'Just now' },
+  { id: '4', name: 'Manoj Yadav', employeeId: 'TM-1004', status: 'OFF_DUTY', lat: 28.6315, lng: 77.2167, lastSeen: '2 hrs ago' },
+  { id: '5', name: 'Ravi Verma', employeeId: 'TM-1005', status: 'DISCONNECTED', lat: 28.6508, lng: 77.2334, lastSeen: '45 min ago' },
+];
 
 const Monitoring: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
 
-  const workers = [
+  const workerCards = [
     { name: 'Amit Sharma', employeeId: 'TM-1001', designation: 'Senior Trackman', status: 'ON_DUTY' as const, lastLocation: 'New Delhi Station - Track 3', lastSeen: '2 min ago', phone: '+91-9876543212' },
     { name: 'Vikram Singh', employeeId: 'TM-1002', designation: 'Senior Trackman', status: 'ON_DUTY' as const, lastLocation: 'Nizamuddin Bridge', lastSeen: '5 min ago' },
     { name: 'Suresh Patel', employeeId: 'TM-1003', designation: 'Trackman', status: 'SOS' as const, lastLocation: 'Ghaziabad Yard', lastSeen: 'Just now' },
@@ -23,15 +29,15 @@ const Monitoring: React.FC = () => {
   ];
 
   const filteredWorkers = selectedFilter === 'all'
-    ? workers
-    : workers.filter((w) => w.status === selectedFilter);
+    ? workerCards
+    : workerCards.filter((w) => w.status === selectedFilter);
 
   const statusCounts = {
-    all: workers.length,
-    ON_DUTY: workers.filter((w) => w.status === 'ON_DUTY').length,
-    SOS: workers.filter((w) => w.status === 'SOS').length,
-    OFF_DUTY: workers.filter((w) => w.status === 'OFF_DUTY').length,
-    DISCONNECTED: workers.filter((w) => w.status === 'DISCONNECTED').length,
+    all: workerCards.length,
+    ON_DUTY: workerCards.filter((w) => w.status === 'ON_DUTY').length,
+    SOS: workerCards.filter((w) => w.status === 'SOS').length,
+    OFF_DUTY: workerCards.filter((w) => w.status === 'OFF_DUTY').length,
+    DISCONNECTED: workerCards.filter((w) => w.status === 'DISCONNECTED').length,
   };
 
   const filters = [
@@ -70,33 +76,8 @@ const Monitoring: React.FC = () => {
                 {statusCounts.ON_DUTY} Active
               </span>
             </div>
-            <div className="flex items-center gap-1">
-              <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all cursor-pointer" title="Layers">
-                <Layers className="w-4 h-4" />
-              </button>
-              <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all cursor-pointer" title="Fullscreen">
-                <Maximize2 className="w-4 h-4" />
-              </button>
-            </div>
           </div>
-          <div className="h-[500px] bg-gradient-to-br from-blue-50 via-slate-50 to-emerald-50 flex items-center justify-center relative">
-            {/* Map placeholder with grid lines to simulate a map */}
-            <div className="absolute inset-0 opacity-[0.04]" style={{
-              backgroundImage: 'linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)',
-              backgroundSize: '40px 40px',
-            }} />
-            {/* Mock worker dots */}
-            <div className="absolute top-[35%] left-[40%] w-4 h-4 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/30 animate-pulse" />
-            <div className="absolute top-[50%] left-[55%] w-4 h-4 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/30 animate-pulse" style={{ animationDelay: '0.5s' }} />
-            <div className="absolute top-[60%] left-[30%] w-4 h-4 bg-red-500 rounded-full shadow-lg shadow-red-500/30 animate-ping" />
-            <div className="absolute top-[45%] left-[65%] w-4 h-4 bg-amber-500 rounded-full shadow-lg shadow-amber-500/30" />
-            {/* Center label */}
-            <div className="relative text-center z-10">
-              <MapPin className="w-14 h-14 text-blue-200 mx-auto mb-3" />
-              <p className="text-sm text-slate-500 font-medium">Leaflet Map — Integration in Week 3</p>
-              <p className="text-xs text-slate-400 mt-1">OpenStreetMap • Center: {MAP_CONFIG.center.join(', ')}</p>
-            </div>
-          </div>
+          <LiveMap workers={defaultWorkers} height="h-[500px]" />
         </div>
 
         {/* Worker Sidebar */}

@@ -8,7 +8,6 @@ import {
   MapPin,
   AlertTriangle,
   FileBarChart,
-  Settings,
   LogOut,
   Shield,
   ChevronLeft,
@@ -22,13 +21,14 @@ interface NavItem {
   roles?: string[];
 }
 
-const navItems: NavItem[] = [
+// All navigation items with role restrictions
+const allNavItems: NavItem[] = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-  { label: 'Monitoring', path: '/admin/monitoring', icon: Monitor },
+  { label: 'Monitoring', path: '/admin/monitoring', icon: Monitor, roles: ['CONTROL_ROOM'] },
   { label: 'Workers', path: '/admin/workers', icon: Users },
   { label: 'Zones', path: '/admin/zones', icon: MapPin },
   { label: 'Alerts', path: '/admin/alerts', icon: AlertTriangle },
-  { label: 'Reports', path: '/admin/reports', icon: FileBarChart },
+  { label: 'Reports', path: '/admin/reports', icon: FileBarChart, roles: ['CONTROL_ROOM'] },
 ];
 
 const Sidebar: React.FC = () => {
@@ -40,6 +40,14 @@ const Sidebar: React.FC = () => {
     logout();
     navigate('/login');
   };
+
+  // Filter nav items based on user role
+  const navItems = allNavItems.filter((item) => {
+    if (!item.roles) return true; // no restriction — show to all
+    return item.roles.includes(user?.role || '');
+  });
+
+  const roleLabel = user?.role === 'CONTROL_ROOM' ? 'Control Room' : 'Supervisor';
 
   return (
     <aside
@@ -55,7 +63,7 @@ const Sidebar: React.FC = () => {
         {!collapsed && (
           <div className="overflow-hidden">
             <h1 className="text-sm font-bold tracking-tight text-white">TrackMan Safety</h1>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Control Panel</p>
+            <p className="text-[10px] text-slate-500 uppercase tracking-wider">{roleLabel}</p>
           </div>
         )}
       </div>
@@ -94,7 +102,7 @@ const Sidebar: React.FC = () => {
           {!collapsed && (
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-white truncate">{user?.name}</p>
-              <p className="text-[10px] text-slate-500 truncate">{user?.role?.replace('_', ' ')}</p>
+              <p className="text-[10px] text-slate-500 truncate">{roleLabel}</p>
             </div>
           )}
           {!collapsed && (

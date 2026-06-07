@@ -10,30 +10,48 @@ import {
   Shield,
 } from 'lucide-react';
 
-const mockAlerts = [
-  { type: 'SOS' as const, severity: 'CRITICAL' as const, message: '🚨 EMERGENCY: Worker Suresh Patel triggered SOS at Ghaziabad Yard!', workerName: 'Suresh Patel', time: 'Just now', status: 'ACTIVE' as const },
-  { type: 'ZONE_BREACH' as const, severity: 'HIGH' as const, message: 'Worker entered Danger Zone: Nizamuddin Bridge without authorization', workerName: 'Amit Sharma', time: '2 min ago', status: 'ACTIVE' as const },
-  { type: 'TRAIN_APPROACHING' as const, severity: 'HIGH' as const, message: 'Train 12301 approaching Track 3 — 3 workers in zone', workerName: 'System', time: '8 min ago', status: 'ACTIVE' as const },
-  { type: 'DEVICE_OFFLINE' as const, severity: 'MEDIUM' as const, message: 'Worker device went offline for 10+ minutes', workerName: 'Ravi Verma', time: '15 min ago', status: 'ACKNOWLEDGED' as const },
-  { type: 'GEOFENCE_EXIT' as const, severity: 'HIGH' as const, message: 'Worker exited assigned maintenance zone without authorization', workerName: 'Vikram Singh', time: '1 hr ago', status: 'RESOLVED' as const },
-  { type: 'DEVICE_OFFLINE' as const, severity: 'LOW' as const, message: 'Worker device battery below 15%', workerName: 'Manoj Yadav', time: '2 hrs ago', status: 'RESOLVED' as const },
+interface Alert {
+  type: 'SOS' | 'ZONE_BREACH' | 'TRAIN_APPROACHING' | 'DEVICE_OFFLINE' | 'GEOFENCE_EXIT';
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  message: string;
+  workerName: string;
+  time: string;
+  status: 'ACTIVE' | 'ACKNOWLEDGED' | 'RESOLVED';
+}
+
+const initialAlerts: Alert[] = [
+  { type: 'SOS', severity: 'CRITICAL', message: '🚨 EMERGENCY: Worker Suresh Patel triggered SOS at Ghaziabad Yard!', workerName: 'Suresh Patel', time: 'Just now', status: 'ACTIVE' },
+  { type: 'ZONE_BREACH', severity: 'HIGH', message: 'Worker entered Danger Zone: Nizamuddin Bridge without authorization', workerName: 'Amit Sharma', time: '2 min ago', status: 'ACTIVE' },
+  { type: 'TRAIN_APPROACHING', severity: 'HIGH', message: 'Train 12301 approaching Track 3 — 3 workers in zone', workerName: 'System', time: '8 min ago', status: 'ACTIVE' },
+  { type: 'DEVICE_OFFLINE', severity: 'MEDIUM', message: 'Worker device went offline for 10+ minutes', workerName: 'Ravi Verma', time: '15 min ago', status: 'ACKNOWLEDGED' },
+  { type: 'GEOFENCE_EXIT', severity: 'HIGH', message: 'Worker exited assigned maintenance zone without authorization', workerName: 'Vikram Singh', time: '1 hr ago', status: 'RESOLVED' },
+  { type: 'DEVICE_OFFLINE', severity: 'LOW', message: 'Worker device battery below 15%', workerName: 'Manoj Yadav', time: '2 hrs ago', status: 'RESOLVED' },
 ];
 
 const Alerts: React.FC = () => {
+  const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
   const [statusFilter, setStatusFilter] = useState('all');
   const [severityFilter, setSeverityFilter] = useState('all');
 
-  const filtered = mockAlerts.filter((a) => {
+  const handleAcknowledge = (index: number) => {
+    setAlerts((prev) => prev.map((a, i) => i === index ? { ...a, status: 'ACKNOWLEDGED' as const } : a));
+  };
+
+  const handleResolve = (index: number) => {
+    setAlerts((prev) => prev.map((a, i) => i === index ? { ...a, status: 'RESOLVED' as const } : a));
+  };
+
+  const filtered = alerts.filter((a) => {
     const matchStatus = statusFilter === 'all' || a.status === statusFilter;
     const matchSeverity = severityFilter === 'all' || a.severity === severityFilter;
     return matchStatus && matchSeverity;
   });
 
   const counts = {
-    total: mockAlerts.length,
-    active: mockAlerts.filter((a) => a.status === 'ACTIVE').length,
-    acknowledged: mockAlerts.filter((a) => a.status === 'ACKNOWLEDGED').length,
-    resolved: mockAlerts.filter((a) => a.status === 'RESOLVED').length,
+    total: alerts.length,
+    active: alerts.filter((a) => a.status === 'ACTIVE').length,
+    acknowledged: alerts.filter((a) => a.status === 'ACKNOWLEDGED').length,
+    resolved: alerts.filter((a) => a.status === 'RESOLVED').length,
   };
 
   return (
@@ -92,11 +110,19 @@ const Alerts: React.FC = () => {
 
       {/* Alert List */}
       <div className="space-y-3">
-        {filtered.map((alert, i) => (
-          <div key={i} className="animate-slide-up" style={{ animationDelay: `${i * 0.05}s` }}>
-            <AlertCard {...alert} />
-          </div>
-        ))}
+        {filtered.map((alert, i) => {
+          // Find the original index in the unfiltered array
+          const originalIndex = alerts.indexOf(alert);
+          return (
+            <div key={originalIndex} className="animate-slide-up" style={{ animationDelay: `${i * 0.05}s` }}>
+              <AlertCard
+                {...alert}
+                onAcknowledge={() => handleAcknowledge(originalIndex)}
+                onResolve={() => handleResolve(originalIndex)}
+              />
+            </div>
+          );
+        })}
         {filtered.length === 0 && (
           <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
             <Shield className="w-12 h-12 text-emerald-300 mx-auto mb-3" />
