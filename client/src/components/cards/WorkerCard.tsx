@@ -13,10 +13,10 @@ interface WorkerCardProps {
 }
 
 const statusConfig = {
-  ON_DUTY:      { label: 'On Duty',      color: 'text-emerald-700 bg-emerald-50 border-emerald-200', dot: 'bg-emerald-500', icon: Signal },
-  OFF_DUTY:     { label: 'Off Duty',     color: 'text-slate-600 bg-slate-50 border-slate-200', dot: 'bg-slate-400', icon: SignalZero },
-  SOS:          { label: '🚨 SOS',       color: 'text-red-700 bg-red-50 border-red-200', dot: 'bg-red-500', icon: Signal },
-  DISCONNECTED: { label: 'Disconnected', color: 'text-amber-700 bg-amber-50 border-amber-200', dot: 'bg-amber-500', icon: SignalZero },
+  ON_DUTY:      { label: 'On Duty',      color: 'text-green-700 bg-green-50 border-green-200', dot: 'bg-green-500' },
+  OFF_DUTY:     { label: 'Off Duty',     color: 'text-gray-600 bg-gray-50 border-gray-200', dot: 'bg-gray-400' },
+  SOS:          { label: 'SOS ALERT',    color: 'text-red-700 bg-red-50 border-red-200', dot: 'bg-red-500' },
+  DISCONNECTED: { label: 'Disconnected', color: 'text-amber-700 bg-amber-50 border-amber-200', dot: 'bg-amber-500' },
 };
 
 const WorkerCard: React.FC<WorkerCardProps> = ({
@@ -35,24 +35,14 @@ const WorkerCard: React.FC<WorkerCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative p-4 bg-white rounded-2xl border transition-all duration-300 cursor-pointer group ${
-        isSOS
-          ? 'border-red-300 shadow-lg shadow-red-100 hover:shadow-xl hover:shadow-red-200'
-          : 'border-slate-200 hover:shadow-lg hover:-translate-y-0.5'
+      className={`p-3 bg-white rounded-lg border transition-colors cursor-pointer ${
+        isSOS ? 'border-red-300 bg-red-50/30' : 'border-gray-200 hover:border-gray-300'
       }`}
     >
-      {/* SOS pulse ring */}
-      {isSOS && (
-        <div className="absolute -top-1 -right-1 w-4 h-4">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
-          <span className="relative inline-flex h-4 w-4 rounded-full bg-red-500" />
-        </div>
-      )}
-
       <div className="flex items-start gap-3">
         {/* Avatar */}
-        <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${
-          isSOS ? 'bg-gradient-to-br from-red-500 to-red-600' : 'bg-gradient-to-br from-blue-500 to-indigo-600'
+        <div className={`w-9 h-9 rounded flex items-center justify-center text-white font-bold text-xs flex-shrink-0 ${
+          isSOS ? 'bg-red-600' : 'bg-[#1a237e]'
         }`}>
           {name.charAt(0)}
         </div>
@@ -60,33 +50,23 @@ const WorkerCard: React.FC<WorkerCardProps> = ({
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-sm font-semibold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
-              {name}
-            </h3>
-            <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${statusInfo.color}`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dot} ${status === 'ON_DUTY' ? 'animate-pulse' : ''}`} />
+            <h3 className="text-sm font-medium text-gray-900 truncate">{name}</h3>
+            <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded border whitespace-nowrap ${statusInfo.color}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dot}`} />
               {statusInfo.label}
             </span>
           </div>
-
-          <p className="text-xs text-slate-500 mt-0.5">{employeeId}{designation ? ` • ${designation}` : ''}</p>
-
-          <div className="flex items-center gap-3 mt-2.5 text-[11px] text-slate-400">
+          <p className="text-xs text-gray-500 mt-0.5">{employeeId}{designation ? ` · ${designation}` : ''}</p>
+          <div className="flex items-center gap-3 mt-2 text-[11px] text-gray-400">
             {lastLocation && (
-              <span className="flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
+              <span className="flex items-center gap-1 truncate">
+                <MapPin className="w-3 h-3 flex-shrink-0" />
                 <span className="truncate max-w-[120px]">{lastLocation}</span>
-              </span>
-            )}
-            {phone && (
-              <span className="flex items-center gap-1">
-                <Phone className="w-3 h-3" />
-                {phone}
               </span>
             )}
             {lastSeen && (
               <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
+                <Clock className="w-3 h-3 flex-shrink-0" />
                 {lastSeen}
               </span>
             )}

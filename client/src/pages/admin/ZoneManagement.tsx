@@ -1,28 +1,11 @@
 import React, { useState } from 'react';
 import CreateZoneModal from '../../components/modals/CreateZoneModal';
-import {
-  MapPin,
-  Plus,
-  Search,
-  Eye,
-  Edit,
-  Trash2,
-  Clock,
-  Shield,
-  AlertTriangle,
-} from 'lucide-react';
+import { MapPin, Plus, Search, Eye, Edit, Trash2, Clock, Shield, AlertTriangle } from 'lucide-react';
 import { ZONE_TYPE_LABELS, ZONE_COLORS } from '../../utils/constants';
 
 interface Zone {
-  id: string;
-  name: string;
-  type: 'MAINTENANCE' | 'DANGER' | 'SAFE';
-  isActive: boolean;
-  startTime?: string;
-  endTime?: string;
-  createdBy: string;
-  workerCount: number;
-  alertCount: number;
+  id: string; name: string; type: 'MAINTENANCE' | 'DANGER' | 'SAFE'; isActive: boolean;
+  startTime?: string; endTime?: string; createdBy: string; workerCount: number; alertCount: number;
 }
 
 const initialZones: Zone[] = [
@@ -40,38 +23,23 @@ const ZoneManagement: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const filtered = zones.filter((z) => {
-    const matchSearch = z.name.toLowerCase().includes(search.toLowerCase());
-    const matchType = typeFilter === 'all' || z.type === typeFilter;
-    return matchSearch && matchType;
+    return z.name.toLowerCase().includes(search.toLowerCase()) && (typeFilter === 'all' || z.type === typeFilter);
   });
 
   const handleCreateZone = (data: any) => {
-    const newZone: Zone = {
-      id: String(zones.length + 1),
-      name: data.name,
-      type: data.type,
-      isActive: true,
-      startTime: data.startTime || undefined,
-      endTime: data.endTime || undefined,
-      createdBy: 'Current User',
-      workerCount: 0,
-      alertCount: 0,
-    };
-    setZones((prev) => [...prev, newZone]);
-  };
-
-  const handleDeleteZone = (id: string) => {
-    setZones((prev) => prev.filter((z) => z.id !== id));
+    setZones((prev) => [...prev, { id: String(prev.length + 1), name: data.name, type: data.type,
+      isActive: true, startTime: data.startTime || undefined, endTime: data.endTime || undefined,
+      createdBy: 'Current User', workerCount: 0, alertCount: 0 }]);
   };
 
   const typeBadge = (type: string) => {
-    const colorMap: Record<string, string> = {
+    const c: Record<string, string> = {
       MAINTENANCE: 'text-blue-700 bg-blue-50 border-blue-200',
       DANGER: 'text-red-700 bg-red-50 border-red-200',
-      SAFE: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+      SAFE: 'text-green-700 bg-green-50 border-green-200',
     };
     return (
-      <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border ${colorMap[type] || ''}`}>
+      <span className={`inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded border ${c[type] || ''}`}>
         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: ZONE_COLORS[type] }} />
         {ZONE_TYPE_LABELS[type]}
       </span>
@@ -79,133 +47,94 @@ const ZoneManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Create Zone Modal */}
-      <CreateZoneModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onSubmit={handleCreateZone}
-      />
+    <div className="space-y-5">
+      <CreateZoneModal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} onSubmit={handleCreateZone} />
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Zone Management</h2>
-          <p className="text-sm text-slate-500 mt-1">Create and manage geofenced safety zones</p>
+          <h2 className="text-xl font-bold text-gray-900">Zone Management</h2>
+          <p className="text-sm text-gray-500 mt-0.5">Create and manage geofenced safety zones</p>
         </div>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-all shadow-sm cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          Create Zone
+        <button onClick={() => setShowCreateModal(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white text-sm font-medium rounded hover:bg-[#283593] transition-colors cursor-pointer">
+          <Plus className="w-4 h-4" /> Create Zone
         </button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         {[
-          { type: 'MAINTENANCE', icon: MapPin, count: zones.filter((z) => z.type === 'MAINTENANCE').length, bg: 'bg-blue-100', text: 'text-blue-600', border: 'border-blue-100' },
-          { type: 'DANGER', icon: AlertTriangle, count: zones.filter((z) => z.type === 'DANGER').length, bg: 'bg-red-100', text: 'text-red-600', border: 'border-red-100' },
-          { type: 'SAFE', icon: Shield, count: zones.filter((z) => z.type === 'SAFE').length, bg: 'bg-emerald-100', text: 'text-emerald-600', border: 'border-emerald-100' },
+          { type: 'MAINTENANCE', icon: MapPin, count: zones.filter((z) => z.type === 'MAINTENANCE').length, bg: 'bg-blue-50', text: 'text-blue-600' },
+          { type: 'DANGER', icon: AlertTriangle, count: zones.filter((z) => z.type === 'DANGER').length, bg: 'bg-red-50', text: 'text-red-600' },
+          { type: 'SAFE', icon: Shield, count: zones.filter((z) => z.type === 'SAFE').length, bg: 'bg-green-50', text: 'text-green-600' },
         ].map((item) => (
-          <div key={item.type} className={`p-4 bg-white rounded-2xl border ${item.border} flex items-center gap-4 hover:shadow-md transition-all`}>
-            <div className={`w-11 h-11 ${item.bg} rounded-xl flex items-center justify-center`}>
+          <div key={item.type} className="p-4 bg-white rounded-lg border border-gray-200 flex items-center gap-3">
+            <div className={`w-10 h-10 ${item.bg} rounded-lg flex items-center justify-center`}>
               <item.icon className={`w-5 h-5 ${item.text}`} />
             </div>
             <div>
-              <p className="text-2xl font-bold text-slate-900">{item.count}</p>
-              <p className="text-xs text-slate-500 font-medium">{ZONE_TYPE_LABELS[item.type]} Zones</p>
+              <p className="text-2xl font-bold text-gray-900">{item.count}</p>
+              <p className="text-xs text-gray-500">{ZONE_TYPE_LABELS[item.type]} Zones</p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Table Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search zones..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all"
-            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input type="text" placeholder="Search zones..." value={search} onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-colors" />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {['all', 'MAINTENANCE', 'DANGER', 'SAFE'].map((t) => (
-              <button
-                key={t}
-                onClick={() => setTypeFilter(t)}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                  typeFilter === t ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {t === 'all' ? 'All' : ZONE_TYPE_LABELS[t]}
-              </button>
+              <button key={t} onClick={() => setTypeFilter(t)}
+                className={`px-3 py-1.5 text-xs font-medium rounded transition-colors cursor-pointer ${
+                  typeFilter === t ? 'bg-[#1a237e] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}>{t === 'all' ? 'All' : ZONE_TYPE_LABELS[t]}</button>
             ))}
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead>
-              <tr className="bg-slate-50/50">
-                <th className="text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-5 py-3">Zone Name</th>
-                <th className="text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-5 py-3">Type</th>
-                <th className="text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-5 py-3">Status</th>
-                <th className="text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-5 py-3 hidden md:table-cell">Schedule</th>
-                <th className="text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Workers</th>
-                <th className="text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Alerts</th>
-                <th className="text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-5 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filtered.map((zone) => (
-                <tr key={zone.id} className="hover:bg-blue-50/30 transition-colors group">
-                  <td className="px-5 py-3.5">
+            <thead><tr className="bg-gray-50">
+              {['Zone Name', 'Type', 'Status', 'Schedule', 'Workers', 'Alerts', 'Actions'].map((h) => (
+                <th key={h} className={`text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-2.5 ${
+                  ['Schedule'].includes(h) ? 'hidden md:table-cell' : ['Workers','Alerts'].includes(h) ? 'hidden lg:table-cell' : ''
+                } ${h === 'Actions' ? 'text-right' : ''}`}>{h}</th>
+              ))}
+            </tr></thead>
+            <tbody className="divide-y divide-gray-100">
+              {filtered.map((z) => (
+                <tr key={z.id} className="hover:bg-blue-50/30 transition-colors">
+                  <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full border-2" style={{ borderColor: ZONE_COLORS[zone.type] }} />
-                      <span className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">{zone.name}</span>
+                      <span className="w-2.5 h-2.5 rounded-full border-2" style={{ borderColor: ZONE_COLORS[z.type] }} />
+                      <span className="text-sm font-medium text-gray-800">{z.name}</span>
                     </div>
                   </td>
-                  <td className="px-5 py-3.5">{typeBadge(zone.type)}</td>
-                  <td className="px-5 py-3.5">
-                    <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-full ${
-                      zone.isActive ? 'text-emerald-700 bg-emerald-50' : 'text-slate-500 bg-slate-100'
-                    }`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${zone.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
-                      {zone.isActive ? 'Active' : 'Inactive'}
-                    </span>
+                  <td className="px-4 py-3">{typeBadge(z.type)}</td>
+                  <td className="px-4 py-3">
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
+                      z.isActive ? 'text-green-700 bg-green-50' : 'text-gray-500 bg-gray-100'
+                    }`}>{z.isActive ? 'Active' : 'Inactive'}</span>
                   </td>
-                  <td className="px-5 py-3.5 hidden md:table-cell">
-                    {zone.startTime ? (
-                      <span className="flex items-center gap-1 text-sm text-slate-500">
-                        <Clock className="w-3.5 h-3.5" />
-                        {zone.startTime} - {zone.endTime}
-                      </span>
-                    ) : (
-                      <span className="text-sm text-slate-400">Always on</span>
-                    )}
+                  <td className="px-4 py-3 hidden md:table-cell">
+                    {z.startTime ? (
+                      <span className="flex items-center gap-1 text-sm text-gray-500"><Clock className="w-3.5 h-3.5" />{z.startTime} - {z.endTime}</span>
+                    ) : <span className="text-sm text-gray-400">Always on</span>}
                   </td>
-                  <td className="px-5 py-3.5 hidden lg:table-cell">
-                    <span className="text-sm font-semibold text-slate-700">{zone.workerCount}</span>
+                  <td className="px-4 py-3 hidden lg:table-cell text-sm font-medium text-gray-700">{z.workerCount}</td>
+                  <td className="px-4 py-3 hidden lg:table-cell">
+                    <span className={`text-sm font-medium ${z.alertCount > 0 ? 'text-amber-600' : 'text-gray-400'}`}>{z.alertCount}</span>
                   </td>
-                  <td className="px-5 py-3.5 hidden lg:table-cell">
-                    <span className={`text-sm font-semibold ${zone.alertCount > 0 ? 'text-amber-600' : 'text-slate-400'}`}>{zone.alertCount}</span>
-                  </td>
-                  <td className="px-5 py-3.5 text-right">
+                  <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <button className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"><Eye className="w-4 h-4" /></button>
-                      <button className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all cursor-pointer"><Edit className="w-4 h-4" /></button>
-                      <button
-                        onClick={() => handleDeleteZone(zone.id)}
-                        className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all cursor-pointer"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <button className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded cursor-pointer"><Eye className="w-4 h-4" /></button>
+                      <button className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded cursor-pointer"><Edit className="w-4 h-4" /></button>
+                      <button onClick={() => setZones((p) => p.filter((x) => x.id !== z.id))}
+                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded cursor-pointer"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </td>
                 </tr>

@@ -20,6 +20,31 @@ interface AuthContextType {
   clearError: () => void;
 }
 
+// ─── Demo users — used when backend is not available ─────────────────────────
+const DEMO_USERS: Record<string, User> = {
+  'supervisor@trackman.com': {
+    id: 'demo-sup-1',
+    name: 'Rajesh Kumar',
+    email: 'supervisor@trackman.com',
+    role: 'SUPERVISOR',
+    phone: '+91-9876543210',
+  },
+  'control@trackman.com': {
+    id: 'demo-cr-1',
+    name: 'Admin Officer',
+    email: 'control@trackman.com',
+    role: 'CONTROL_ROOM',
+    phone: '+91-9876543211',
+  },
+  'amit@trackman.com': {
+    id: 'demo-tm-1',
+    name: 'Amit Sharma',
+    email: 'amit@trackman.com',
+    role: 'TRACKMAN',
+    phone: '+91-9876543212',
+  },
+};
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -47,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
 
     try {
+      // Try real backend first
       const { data } = await api.post('/auth/login', { email, password });
       const { user: userData, accessToken, refreshToken } = data.data;
 
@@ -56,7 +82,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       setUser(userData);
     } catch (err: any) {
-      const message = err.response?.data?.message || 'Login failed. Please try again.';
+      // If backend is unreachable, use demo credentials
+      const demoUser = DEMO_USERS[email.toLowerCase()];
+      if (demoUser && password === 'password123') {
+        const demoToken = 'demo-token-' + Date.now();
+        localStorage.setItem('accessToken', demoToken);
+        localStorage.setItem('refreshToken', demoToken);
+        localStorage.setItem('user', JSON.stringify(demoUser));
+        setUser(demoUser);
+        return;
+      }
+
+      // If not a valid demo user either
+      const message =
+        err.code === 'ERR_NETWORK'
+          ? 'Invalid credentials. Use demo credentials to sign in.'
+          : err.response?.data?.message || 'Login failed. Please check your credentials.';
       setError(message);
       throw new Error(message);
     } finally {

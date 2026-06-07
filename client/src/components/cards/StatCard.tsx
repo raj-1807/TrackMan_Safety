@@ -10,40 +10,34 @@ interface StatCardProps {
 }
 
 const colorMap = {
-  blue:    { bg: 'bg-blue-50',    text: 'text-blue-600',    border: 'border-blue-100',    iconBg: 'bg-blue-100' },
-  emerald: { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-100', iconBg: 'bg-emerald-100' },
-  amber:   { bg: 'bg-amber-50',   text: 'text-amber-600',   border: 'border-amber-100',   iconBg: 'bg-amber-100' },
-  red:     { bg: 'bg-red-50',     text: 'text-red-600',     border: 'border-red-100',     iconBg: 'bg-red-100' },
-  purple:  { bg: 'bg-purple-50',  text: 'text-purple-600',  border: 'border-purple-100',  iconBg: 'bg-purple-100' },
-  cyan:    { bg: 'bg-cyan-50',    text: 'text-cyan-600',    border: 'border-cyan-100',    iconBg: 'bg-cyan-100' },
+  blue:    { text: 'text-blue-600',    iconBg: 'bg-blue-50' },
+  emerald: { text: 'text-emerald-600', iconBg: 'bg-emerald-50' },
+  amber:   { text: 'text-amber-600',   iconBg: 'bg-amber-50' },
+  red:     { text: 'text-red-600',     iconBg: 'bg-red-50' },
+  purple:  { text: 'text-purple-600',  iconBg: 'bg-purple-50' },
+  cyan:    { text: 'text-cyan-600',    iconBg: 'bg-cyan-50' },
 };
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, trend, color }) => {
   const colors = colorMap[color];
 
   return (
-    <div className={`relative p-5 bg-white rounded-2xl border ${colors.border} hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group overflow-hidden`}>
-      {/* Subtle background glow */}
-      <div className={`absolute -top-10 -right-10 w-24 h-24 ${colors.bg} rounded-full opacity-50 group-hover:opacity-80 transition-opacity blur-2xl`} />
-
-      <div className="relative flex items-start justify-between mb-4">
-        <div className={`w-11 h-11 ${colors.iconBg} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+    <div className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
+      <div className="flex items-start justify-between mb-3">
+        <div className={`w-10 h-10 ${colors.iconBg} rounded-lg flex items-center justify-center`}>
           <Icon className={`w-5 h-5 ${colors.text}`} />
         </div>
         {trend && (
-          <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${
-            trend.isPositive ? 'text-emerald-700 bg-emerald-50' : 'text-red-700 bg-red-50'
+          <div className={`flex items-center gap-1 text-xs font-medium ${
+            trend.isPositive ? 'text-green-600' : 'text-red-600'
           }`}>
             {trend.isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
             {trend.value}
           </div>
         )}
       </div>
-
-      <div className="relative">
-        <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{value}</p>
-        <p className="text-sm text-slate-500 mt-1 font-medium">{title}</p>
-      </div>
+      <p className="text-2xl font-bold text-gray-900">{value}</p>
+      <p className="text-xs text-gray-500 mt-1">{title}</p>
     </div>
   );
 };

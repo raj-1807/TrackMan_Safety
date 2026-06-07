@@ -17,21 +17,21 @@ const typeConfig = {
   ZONE_BREACH:       { icon: Shield, color: 'text-red-500' },
   SOS:               { icon: AlertTriangle, color: 'text-red-600' },
   TRAIN_APPROACHING: { icon: Navigation, color: 'text-amber-500' },
-  DEVICE_OFFLINE:    { icon: WifiOff, color: 'text-slate-500' },
+  DEVICE_OFFLINE:    { icon: WifiOff, color: 'text-gray-500' },
   GEOFENCE_EXIT:     { icon: Navigation, color: 'text-orange-500' },
 };
 
 const severityConfig = {
-  LOW:      { color: 'text-blue-700 bg-blue-50 border-blue-200' },
-  MEDIUM:   { color: 'text-amber-700 bg-amber-50 border-amber-200' },
-  HIGH:     { color: 'text-orange-700 bg-orange-50 border-orange-200' },
-  CRITICAL: { color: 'text-red-700 bg-red-50 border-red-200' },
+  LOW:      'text-blue-700 bg-blue-50',
+  MEDIUM:   'text-amber-700 bg-amber-50',
+  HIGH:     'text-orange-700 bg-orange-50',
+  CRITICAL: 'text-red-700 bg-red-50',
 };
 
 const statusConfig = {
   ACTIVE:       { label: 'Active', color: 'text-red-600 bg-red-50' },
   ACKNOWLEDGED: { label: 'Acknowledged', color: 'text-amber-600 bg-amber-50' },
-  RESOLVED:     { label: 'Resolved', color: 'text-emerald-600 bg-emerald-50' },
+  RESOLVED:     { label: 'Resolved', color: 'text-green-600 bg-green-50' },
 };
 
 const AlertCard: React.FC<AlertCardProps> = ({
@@ -46,74 +46,60 @@ const AlertCard: React.FC<AlertCardProps> = ({
   onResolve,
 }) => {
   const typeInfo = typeConfig[type];
-  const sevInfo = severityConfig[severity];
   const statusInfo = statusConfig[status];
-  const isCritical = severity === 'CRITICAL';
 
   return (
     <div
       onClick={onClick}
-      className={`relative p-4 bg-white rounded-2xl border transition-all duration-300 cursor-pointer group ${
-        isCritical
-          ? 'border-red-200 hover:shadow-lg hover:shadow-red-100'
-          : 'border-slate-200 hover:shadow-md hover:-translate-y-0.5'
+      className={`p-3 bg-white rounded-lg border transition-colors cursor-pointer ${
+        severity === 'CRITICAL' && status === 'ACTIVE'
+          ? 'border-red-300 bg-red-50/20'
+          : 'border-gray-200 hover:border-gray-300'
       }`}
     >
-      {/* Critical pulse */}
-      {isCritical && status === 'ACTIVE' && (
-        <div className="absolute top-3 right-3">
-          <span className="flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
-          </span>
-        </div>
-      )}
-
       <div className="flex items-start gap-3">
-        {/* Icon */}
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-          isCritical ? 'bg-red-100' : 'bg-slate-100'
+        <div className={`w-8 h-8 rounded flex items-center justify-center flex-shrink-0 ${
+          severity === 'CRITICAL' ? 'bg-red-100' : 'bg-gray-100'
         }`}>
-          <typeInfo.icon className={`w-5 h-5 ${typeInfo.color}`} />
+          <typeInfo.icon className={`w-4 h-4 ${typeInfo.color}`} />
         </div>
 
-        {/* Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${sevInfo.color}`}>
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${severityConfig[severity]}`}>
               {severity}
             </span>
-            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${statusInfo.color}`}>
+            <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${statusInfo.color}`}>
               {statusInfo.label}
             </span>
           </div>
-          <p className="text-sm text-slate-800 font-medium leading-snug line-clamp-2">{message}</p>
-          <div className="flex items-center gap-3 mt-2 text-[11px] text-slate-400">
-            <span className="font-medium text-slate-500">{workerName}</span>
+          <p className="text-sm text-gray-800 font-medium leading-snug">{message}</p>
+          <div className="flex items-center gap-3 mt-1.5 text-[11px] text-gray-400">
+            <span className="font-medium text-gray-500">{workerName}</span>
             <span className="flex items-center gap-1">
               <Clock className="w-3 h-3" />
               {time}
             </span>
           </div>
 
-          {/* Action Buttons */}
+          {/* Actions */}
           {(onAcknowledge || onResolve) && status !== 'RESOLVED' && (
-            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
+            <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100">
               {onAcknowledge && status === 'ACTIVE' && (
                 <button
                   onClick={(e) => { e.stopPropagation(); onAcknowledge(); }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg transition-all cursor-pointer"
+                  className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded hover:bg-amber-100 transition-colors cursor-pointer"
                 >
-                  <CheckCircle className="w-3.5 h-3.5" />
+                  <CheckCircle className="w-3 h-3" />
                   Acknowledge
                 </button>
               )}
               {onResolve && (status === 'ACTIVE' || status === 'ACKNOWLEDGED') && (
                 <button
                   onClick={(e) => { e.stopPropagation(); onResolve(); }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-all cursor-pointer"
+                  className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-green-700 bg-green-50 border border-green-200 rounded hover:bg-green-100 transition-colors cursor-pointer"
                 >
-                  <CheckCheck className="w-3.5 h-3.5" />
+                  <CheckCheck className="w-3 h-3" />
                   Resolve
                 </button>
               )}

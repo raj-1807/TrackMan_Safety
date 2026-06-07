@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 import WorkerCard from '../../components/cards/WorkerCard';
 import LiveMap from '../../components/maps/LiveMap';
 import type { MapWorker } from '../../components/maps/MapComponent';
-import {
-  Users,
-  Filter,
-  RefreshCw,
-  Radio,
-} from 'lucide-react';
+import { Users, Filter, RefreshCw, Radio } from 'lucide-react';
 
 const defaultWorkers: MapWorker[] = [
   { id: '1', name: 'Amit Sharma', employeeId: 'TM-1001', status: 'ON_DUTY', lat: 28.6424, lng: 77.2195, lastSeen: '2 min ago' },
@@ -41,71 +36,58 @@ const Monitoring: React.FC = () => {
   };
 
   const filters = [
-    { key: 'all', label: 'All Workers', count: statusCounts.all, color: 'bg-slate-500' },
-    { key: 'ON_DUTY', label: 'On Duty', count: statusCounts.ON_DUTY, color: 'bg-emerald-500' },
-    { key: 'SOS', label: 'SOS', count: statusCounts.SOS, color: 'bg-red-500' },
-    { key: 'OFF_DUTY', label: 'Off Duty', count: statusCounts.OFF_DUTY, color: 'bg-slate-400' },
-    { key: 'DISCONNECTED', label: 'Disconnected', count: statusCounts.DISCONNECTED, color: 'bg-amber-500' },
+    { key: 'all', label: 'All', count: statusCounts.all },
+    { key: 'ON_DUTY', label: 'On Duty', count: statusCounts.ON_DUTY },
+    { key: 'SOS', label: 'SOS', count: statusCounts.SOS },
+    { key: 'OFF_DUTY', label: 'Off Duty', count: statusCounts.OFF_DUTY },
+    { key: 'DISCONNECTED', label: 'Offline', count: statusCounts.DISCONNECTED },
   ];
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Real-Time Monitoring</h2>
-          <p className="text-sm text-slate-500 mt-1">Live GPS tracking of all workers on the field</p>
+          <h2 className="text-xl font-bold text-gray-900">Real-Time Monitoring</h2>
+          <p className="text-sm text-gray-500 mt-0.5">Live GPS tracking of workers on the field</p>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-all shadow-sm cursor-pointer">
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </button>
-        </div>
+        <button className="flex items-center gap-2 px-4 py-2 bg-[#1a237e] text-white text-sm font-medium rounded hover:bg-[#283593] transition-colors cursor-pointer">
+          <RefreshCw className="w-4 h-4" />
+          Refresh
+        </button>
       </div>
 
-      {/* Main Content: Map + Sidebar */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-        {/* Map Area */}
-        <div className="xl:col-span-3 bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-5">
+        <div className="xl:col-span-3 bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Radio className="w-5 h-5 text-blue-600 animate-pulse" />
-              <h3 className="text-sm font-semibold text-slate-900">Live Tracking Map</h3>
-              <span className="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded-full">
+              <Radio className="w-4 h-4 text-[#1a237e]" />
+              <h3 className="text-sm font-semibold text-gray-900">Live Tracking Map</h3>
+              <span className="text-[10px] bg-green-50 text-green-700 font-medium px-2 py-0.5 rounded border border-green-200">
                 {statusCounts.ON_DUTY} Active
               </span>
             </div>
           </div>
-          <LiveMap workers={defaultWorkers} height="h-[500px]" />
+          <LiveMap workers={defaultWorkers} height="h-[480px]" />
         </div>
 
-        {/* Worker Sidebar */}
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-slate-100">
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col">
+          <div className="px-4 py-3 border-b border-gray-100">
             <div className="flex items-center gap-2 mb-3">
-              <Users className="w-5 h-5 text-blue-600" />
-              <h3 className="text-sm font-semibold text-slate-900">Workers</h3>
+              <Users className="w-4 h-4 text-[#1a237e]" />
+              <h3 className="text-sm font-semibold text-gray-900">Workers</h3>
             </div>
-            {/* Status Filters */}
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1">
               {filters.map((f) => (
                 <button
                   key={f.key}
                   onClick={() => setSelectedFilter(f.key)}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                  className={`px-2.5 py-1 rounded text-[11px] font-medium transition-colors cursor-pointer ${
                     selectedFilter === f.key
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-[#1a237e] text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full ${selectedFilter === f.key ? 'bg-white' : f.color}`} />
-                  {f.label}
-                  <span className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] ${
-                    selectedFilter === f.key ? 'bg-white/20 text-white' : 'bg-white text-slate-500'
-                  }`}>
-                    {f.count}
-                  </span>
+                  {f.label} ({f.count})
                 </button>
               ))}
             </div>
@@ -115,9 +97,9 @@ const Monitoring: React.FC = () => {
               <WorkerCard key={worker.employeeId} {...worker} />
             ))}
             {filteredWorkers.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+              <div className="flex flex-col items-center justify-center py-12 text-gray-400">
                 <Filter className="w-8 h-8 mb-2" />
-                <p className="text-sm font-medium">No workers match filter</p>
+                <p className="text-sm">No workers match filter</p>
               </div>
             )}
           </div>
